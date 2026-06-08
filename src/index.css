@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color: #1f2937; background: #dff7ff; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button, input { font: inherit; }
+
+@keyframes missile { 0% { transform: translateY(0); opacity: .2; } 25% { opacity: 1; } 100% { transform: translateY(-18rem); opacity: 0; } }
+@keyframes enemy-shot { 0% { transform: translateY(0); opacity: .2; } 25% { opacity: 1; } 100% { transform: translateY(17rem); opacity: 0; } }
+@keyframes pop { 0% { transform: scale(.6); opacity: 0; } 55% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+@keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 75% { transform: translateX(-5px); } }
+@keyframes enemy-entry { 0% { transform: translateY(-8rem) scale(.88); opacity: 0; } 70% { transform: translateY(.4rem) scale(1.02); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+@keyframes ship-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-.5rem); } }
+@keyframes stars-drift { 0% { transform: translateY(-18rem); } 100% { transform: translateY(18rem); } }
+.animate-missile { animation: missile 720ms ease-out both; }
+.animate-enemy-shot { animation: enemy-shot 720ms ease-out both; }
+.animate-pop { animation: pop 720ms ease-out both; }
+.animate-shake { animation: shake 420ms ease-in-out both; }
+.space-field { background: radial-gradient(circle at 18% 20%, rgba(34,211,238,.22), transparent 18rem), radial-gradient(circle at 78% 12%, rgba(244,114,182,.2), transparent 15rem), linear-gradient(180deg,#020617 0%,#111827 48%,#0f172a 100%); }
+.stars-layer { position: absolute; inset: -18rem 0; background-repeat: repeat; pointer-events: none; }
+.stars-layer-a { background-image: radial-gradient(circle,rgba(255,255,255,.9) 0 1px,transparent 1.5px), radial-gradient(circle,rgba(125,211,252,.9) 0 1px,transparent 1.5px); background-position: 0 0, 36px 58px; background-size: 86px 86px, 124px 124px; animation: stars-drift 18s linear infinite; opacity: .75; }
+.stars-layer-b { background-image: radial-gradient(circle,rgba(255,255,255,.75) 0 1.5px,transparent 2px), radial-gradient(circle,rgba(251,191,36,.8) 0 1px,transparent 1.5px); background-position: 18px 24px, 72px 8px; background-size: 142px 142px, 196px 196px; animation: stars-drift 11s linear infinite; opacity: .55; }
+.enemy-ship { animation: enemy-entry 900ms cubic-bezier(.2,.9,.2,1) both, ship-float 2.6s ease-in-out 900ms infinite; }
+.player-ship { animation: ship-float 2.2s ease-in-out infinite; }
