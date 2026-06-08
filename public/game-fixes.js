@@ -14,9 +14,11 @@
   document.head.append(style);
 
   function patchScreen() {
-    document.querySelectorAll("h1").forEach((heading) => {
-      if (heading.textContent?.trim() === "시간 비행 드릴") heading.textContent = NEW_TITLE;
-    });
+    if (document.getElementById("ranking-patch-button")) {
+      document.querySelectorAll("h1").forEach((heading) => {
+        if (heading.textContent?.trim() === "시간 비행 드릴") heading.textContent = NEW_TITLE;
+      });
+    }
 
     const paragraphs = [...document.querySelectorAll("p")];
     const firstWarning = paragraphs.find((paragraph) => {
