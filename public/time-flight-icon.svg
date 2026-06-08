@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="시간 비행 드릴 아이콘">
+  <rect width="128" height="128" rx="24" fill="#0f172a"/>
+  <circle cx="28" cy="24" r="3" fill="#e0f2fe"/>
+  <circle cx="98" cy="34" r="2.5" fill="#fde68a"/>
+  <circle cx="106" cy="86" r="3" fill="#bae6fd"/>
+  <path d="M64 18c7 0 13 6 13 13v23l30 19c3 2 4 5 2 8l-3 5-29-10v15l10 9-3 7-20-6-20 6-3-7 10-9V76L22 86l-3-5c-2-3-1-6 2-8l30-19V31c0-7 6-13 13-13Z" fill="#38bdf8"/>
+  <path d="M64 18c7 0 13 6 13 13v23l30 19c3 2 4 5 2 8l-3 5-42-14V18Z" fill="#f97316" opacity=".9"/>
+  <path d="M56 28h16v16H56z" rx="8" fill="#e0f2fe"/>
+  <path d="M59 112h10l-5 12-5-12Z" fill="#facc15"/>
+</svg>
