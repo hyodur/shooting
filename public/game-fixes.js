@@ -23,7 +23,7 @@
     const paragraphs = [...document.querySelectorAll("p")];
     const firstWarning = paragraphs.find((paragraph) => {
       const text = paragraph.textContent?.trim() || "";
-      return text.startsWith("피격! -") && !text.includes("두 번째 오답");
+      return text.startsWith("피격! -") && !text.includes("정답은") && !text.includes("두 번째 오답");
     });
 
     if (!firstWarning) {
