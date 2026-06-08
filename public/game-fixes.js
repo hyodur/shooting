@@ -13,6 +13,21 @@
   `;
   document.head.append(style);
 
+  function showRealHit(paragraph) {
+    document.body.removeAttribute("data-first-warning");
+    paragraph.textContent = paragraph.textContent
+      .replace("위험!", "피격!")
+      .replace("한 번 더 틀리면 피격돼요. ", "");
+    document.querySelectorAll("div").forEach((element) => {
+      if (element.textContent?.trim() === "위험! 한 번 남음" && element.children.length === 0) {
+        element.textContent = "피격!";
+        element.style.width = "8rem";
+        element.style.background = "#ffe4e6";
+        element.style.color = "#be123c";
+      }
+    });
+  }
+
   function patchScreen() {
     if (document.getElementById("ranking-patch-button")) {
       document.querySelectorAll("h1").forEach((heading) => {
@@ -21,6 +36,15 @@
     }
 
     const paragraphs = [...document.querySelectorAll("p")];
+    const completedHit = paragraphs.find((paragraph) => {
+      const text = paragraph.textContent?.trim() || "";
+      return text.startsWith("위험! -") && text.includes("정답은");
+    });
+    if (completedHit) {
+      showRealHit(completedHit);
+      return;
+    }
+
     const firstWarning = paragraphs.find((paragraph) => {
       const text = paragraph.textContent?.trim() || "";
       return text.startsWith("피격! -") && !text.includes("정답은") && !text.includes("두 번째 오답");
