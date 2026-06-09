@@ -19,6 +19,7 @@
       body[data-game-screen="true"] .mobile-problem-panel [class*="py-2"] { padding-top: 0.12rem !important; padding-bottom: 0.12rem !important; }
       body[data-game-screen="true"] .mobile-problem-panel [class*="py-1"] { padding-top: 0.05rem !important; padding-bottom: 0.05rem !important; }
       body[data-game-screen="true"] .mobile-problem-panel [class*="my-2"] { margin-top: 0.2rem !important; margin-bottom: 0.2rem !important; }
+      body[data-game-screen="true"] .mobile-number-pad { align-self: start !important; }
       body[data-game-screen="true"] .mobile-number-pad button { height: 1.8rem !important; }
     }
   `;
