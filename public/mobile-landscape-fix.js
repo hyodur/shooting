@@ -3,7 +3,9 @@
   style.textContent = `
     @media (orientation: landscape) and (max-height: 650px) and (min-width: 640px) {
       body[data-game-screen="true"] > button { top: 0.35rem !important; right: 0.35rem !important; height: 2.25rem !important; padding-inline: 0.65rem !important; font-size: 0.8rem !important; }
+      body[data-game-screen="true"] main { padding-top: 0 !important; padding-bottom: 0 !important; }
       body[data-game-screen="true"] .space-field { height: calc(100dvh - 7rem) !important; min-height: 15rem !important; }
+      body[data-game-screen="true"] .problem-column { gap: 0.1rem !important; }
       body[data-game-screen="true"] .problem-column > * { margin-top: 0 !important; }
       body[data-game-screen="true"] .mobile-problem-panel > div:first-child { min-height: 1.35rem; margin-bottom: 0 !important; }
       body[data-game-screen="true"] .mobile-problem-panel h2 { display: none; }
