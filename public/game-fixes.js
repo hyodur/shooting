@@ -14,7 +14,6 @@
       background-image: linear-gradient(rgba(2, 132, 199, 0.08), rgba(15, 23, 42, 0.18)), url('./assets/bg.jpg') !important;
       background-size: cover !important;
       background-position: center !important;
-      background-attachment: fixed !important;
     }
     body[data-start-art="true"] main > section {
       background: rgba(255, 255, 255, 0.88) !important;
@@ -44,9 +43,9 @@
       (button) => button.textContent?.trim() === "게임 시작"
     );
     if (startHeading && startButton) {
-      startHeading.textContent = NEW_TITLE;
-      document.body.dataset.startArt = "true";
-    } else {
+      if (startHeading.textContent?.trim() !== NEW_TITLE) startHeading.textContent = NEW_TITLE;
+      if (document.body.dataset.startArt !== "true") document.body.dataset.startArt = "true";
+    } else if (document.body.hasAttribute("data-start-art")) {
       document.body.removeAttribute("data-start-art");
     }
 
@@ -74,12 +73,16 @@
         image.src = "./assets/me.png";
         player.replaceChildren(image);
       }
-      if (player.parentElement) player.parentElement.style.bottom = "6rem";
+      if (player.parentElement && player.parentElement.style.bottom !== "6rem") {
+        player.parentElement.style.bottom = "6rem";
+      }
     }
   }
 
   function showRealHit(paragraph) {
-    document.body.removeAttribute("data-first-warning");
+    if (document.body.hasAttribute("data-first-warning")) {
+      document.body.removeAttribute("data-first-warning");
+    }
     paragraph.textContent = paragraph.textContent
       .replace("위험!", "피격!")
       .replace("한 번 더 틀리면 피격돼요. ", "");
@@ -112,11 +115,13 @@
     });
 
     if (!firstWarning) {
-      document.body.removeAttribute("data-first-warning");
+      if (document.body.hasAttribute("data-first-warning")) {
+        document.body.removeAttribute("data-first-warning");
+      }
       return;
     }
 
-    document.body.dataset.firstWarning = "true";
+    if (document.body.dataset.firstWarning !== "true") document.body.dataset.firstWarning = "true";
     firstWarning.textContent = firstWarning.textContent
       .replace("피격!", "위험!")
       .replace("점. ", "점. 한 번 더 틀리면 피격돼요. ");
@@ -131,10 +136,20 @@
     });
   }
 
-  new MutationObserver(patchScreen).observe(document.documentElement, {
+  let patchQueued = false;
+  function queuePatch() {
+    if (patchQueued) return;
+    patchQueued = true;
+    requestAnimationFrame(() => {
+      patchQueued = false;
+      patchScreen();
+    });
+  }
+
+  new MutationObserver(queuePatch).observe(document.body, {
     childList: true,
     subtree: true,
     characterData: true,
   });
-  patchScreen();
+  queuePatch();
 })();
