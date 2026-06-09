@@ -11,7 +11,7 @@
       background: transparent !important;
     }
     body[data-start-art="true"] main {
-      background-image: linear-gradient(rgba(2, 132, 199, 0.08), rgba(15, 23, 42, 0.18)), url('./assets/bg.jpg') !important;
+      background-image: linear-gradient(rgba(2, 132, 199, 0.08), rgba(15, 23, 42, 0.18)), url('./assets/bg.jpg?v=56fae2') !important;
       background-size: cover !important;
       background-position: center !important;
     }
@@ -80,9 +80,7 @@
   }
 
   function showRealHit(paragraph) {
-    if (document.body.hasAttribute("data-first-warning")) {
-      document.body.removeAttribute("data-first-warning");
-    }
+    if (document.body.hasAttribute("data-first-warning")) document.body.removeAttribute("data-first-warning");
     paragraph.textContent = paragraph.textContent
       .replace("위험!", "피격!")
       .replace("한 번 더 틀리면 피격돼요. ", "");
@@ -98,7 +96,6 @@
 
   function patchScreen() {
     patchArtwork();
-
     const paragraphs = [...document.querySelectorAll("p")];
     const completedHit = paragraphs.find((paragraph) => {
       const text = paragraph.textContent?.trim() || "";
@@ -113,11 +110,8 @@
       const text = paragraph.textContent?.trim() || "";
       return text.startsWith("피격! -") && !text.includes("정답은") && !text.includes("두 번째 오답");
     });
-
     if (!firstWarning) {
-      if (document.body.hasAttribute("data-first-warning")) {
-        document.body.removeAttribute("data-first-warning");
-      }
+      if (document.body.hasAttribute("data-first-warning")) document.body.removeAttribute("data-first-warning");
       return;
     }
 
@@ -125,7 +119,6 @@
     firstWarning.textContent = firstWarning.textContent
       .replace("피격!", "위험!")
       .replace("점. ", "점. 한 번 더 틀리면 피격돼요. ");
-
     document.querySelectorAll("div").forEach((element) => {
       if (element.textContent?.trim() === "피격!" && element.children.length === 0) {
         element.textContent = "위험! 한 번 남음";
