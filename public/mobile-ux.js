@@ -13,6 +13,7 @@
     @media (orientation: landscape) and (max-height: 650px) and (min-width: 640px) {
       body[data-game-screen="true"] { overflow-x: hidden; }
       body[data-game-screen="true"] main { min-height: 100dvh; padding: 0.35rem !important; }
+      body[data-game-screen="true"] > button { top: 0.35rem !important; right: 0.35rem !important; height: 2.25rem !important; padding-inline: 0.65rem !important; font-size: 0.8rem !important; }
       body[data-game-screen="true"] main > div.mx-auto.grid { grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr) !important; gap: 0.5rem !important; }
       body[data-game-screen="true"] main > div.mx-auto.grid > div { min-width: 0; }
       body[data-game-screen="true"] .game-toolbar { position: absolute; z-index: 20; margin: 0.35rem; }
@@ -28,15 +29,19 @@
       body[data-game-screen="true"] .player-ship-parent { bottom: 1.6rem !important; }
       body[data-game-screen="true"] .problem-column { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 0.4rem !important; }
       body[data-game-screen="true"] .mobile-problem-panel { padding: 0.45rem !important; border-width: 2px !important; }
-      body[data-game-screen="true"] .mobile-problem-panel > div:first-child { margin-bottom: 0.2rem !important; }
-      body[data-game-screen="true"] .mobile-problem-panel h2 { font-size: 1rem !important; }
-      body[data-game-screen="true"] .mobile-problem-panel > div:first-child span { padding: 0.15rem 0.45rem !important; font-size: 0.7rem !important; }
-      body[data-game-screen="true"] .mobile-problem-panel > div:last-child { max-width: none !important; padding: 0.3rem !important; }
-      body[data-game-screen="true"] .mobile-problem-panel input { width: 3.6rem !important; height: 2.25rem !important; font-size: 1.15rem !important; }
-      body[data-game-screen="true"] .mobile-problem-panel .text-3xl { font-size: 1.25rem !important; line-height: 1.45rem !important; }
-      body[data-game-screen="true"] .mobile-problem-panel .text-4xl { font-size: 1.55rem !important; }
-      body[data-game-screen="true"] .mobile-problem-panel .text-xl { gap: 0.25rem !important; font-size: 0.95rem !important; }
-      body[data-game-screen="true"] .mobile-problem-panel [class*="py-2"] { padding-top: 0.25rem !important; padding-bottom: 0.25rem !important; }
+      body[data-game-screen="true"] .mobile-problem-panel > div:first-child { min-height: 1.35rem; margin-bottom: 0 !important; }
+      body[data-game-screen="true"] .mobile-problem-panel h2 { display: none; }
+      body[data-game-screen="true"] .mobile-problem-panel > div:first-child span { padding: 0.1rem 0.4rem !important; font-size: 0.65rem !important; }
+      body[data-game-screen="true"] .mobile-problem-panel > div:nth-child(2) { max-width: none !important; padding: 0.15rem 0.3rem !important; }
+      body[data-game-screen="true"] .mobile-problem-panel > p:last-child { margin-top: 0.15rem !important; padding: 0.15rem 0.3rem !important; font-size: 0.62rem !important; line-height: 1.15 !important; }
+      body[data-game-screen="true"] .mobile-problem-panel [class*="grid-cols-"] { column-gap: 0.25rem !important; }
+      body[data-game-screen="true"] .mobile-problem-panel input { width: 3.35rem !important; height: 1.9rem !important; font-size: 1rem !important; }
+      body[data-game-screen="true"] .mobile-problem-panel .text-3xl { font-size: 1.05rem !important; line-height: 1.15rem !important; }
+      body[data-game-screen="true"] .mobile-problem-panel .text-4xl { font-size: 1.3rem !important; }
+      body[data-game-screen="true"] .mobile-problem-panel .text-xl { gap: 0.25rem !important; font-size: 0.8rem !important; }
+      body[data-game-screen="true"] .mobile-problem-panel [class*="py-2"] { padding-top: 0.12rem !important; padding-bottom: 0.12rem !important; }
+      body[data-game-screen="true"] .mobile-problem-panel [class*="py-1"] { padding-top: 0.05rem !important; padding-bottom: 0.05rem !important; }
+      body[data-game-screen="true"] .mobile-problem-panel [class*="my-2"] { margin-top: 0.2rem !important; margin-bottom: 0.2rem !important; }
       body[data-game-screen="true"] .problem-actions { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(12rem, 0.78fr) !important; gap: 0.4rem !important; }
       body[data-game-screen="true"] .mobile-feedback-panel { padding: 0.55rem !important; border-width: 2px !important; overflow: auto; }
       body[data-game-screen="true"] .mobile-feedback-panel p:first-child { font-size: 0.85rem !important; }
@@ -51,6 +56,7 @@
     return [...document.querySelectorAll("button")].find((button) => button.textContent?.trim() === text);
   }
 
+  let wasGameScreen = false;
   function patchScreen() {
     const numericInputs = [...document.querySelectorAll(MOBILE_INPUT_SELECTOR)];
     numericInputs.forEach((input) => {
@@ -63,10 +69,16 @@
     const gameField = document.querySelector(".space-field");
     if (!gameField) {
       document.body.removeAttribute("data-game-screen");
+      wasGameScreen = false;
       return;
     }
 
     document.body.dataset.gameScreen = "true";
+    if (!wasGameScreen) {
+      wasGameScreen = true;
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
+
     const canvasPanel = gameField.closest("section");
     canvasPanel?.classList.add("game-canvas-panel");
     canvasPanel?.previousElementSibling?.classList.add("game-toolbar");
@@ -97,7 +109,6 @@
     queued = true;
     requestAnimationFrame(() => { queued = false; patchScreen(); });
   }
-
   new MutationObserver(queuePatch).observe(document.body, { childList: true, subtree: true });
   queuePatch();
 })();
