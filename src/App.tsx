@@ -119,10 +119,19 @@ function bgm(step: number) {
   if (step % 2 === 0) tone(lead[step % lead.length], 0.03, 0.1, "triangle", 0.025);
 }
 
-function scoreFor(elapsed: number, streak: number, mistakes: number) {
-  const speed = Math.max(0, 120 - Math.floor((elapsed / 1000) * 6));
-  const combo = Math.min(120, streak * 15);
-  return Math.max(20, 100 + speed + combo - mistakes * 35);
+function scoreFor(elapsed: number, streak: number, mistakes: number, difficulty: Difficulty) {
+  const elapsedSeconds = elapsed / 1000;
+  const speed =
+    elapsedSeconds <= 5 ? 150 :
+    elapsedSeconds <= 10 ? 110 :
+    elapsedSeconds <= 15 ? 70 :
+    elapsedSeconds <= 20 ? 35 : 0;
+  const combo = Math.min(160, Math.max(0, streak - 1) * 20);
+  const accuracyPenalty = mistakes * 60;
+  const difficultyMultiplier = difficulty === "hard" ? 1.8 : difficulty === "normal" ? 1.4 : 1;
+  const total = Math.max(20, Math.round((100 + speed + combo - accuracyPenalty) * difficultyMultiplier));
+
+  return { total, speed, combo, accuracyPenalty, difficultyMultiplier };
 }
 
 function GameCanvas({ hearts, shot, phase, streak, score }: { hearts: number; shot: number; phase: Phase; streak: number; score: number }) {
@@ -164,7 +173,7 @@ function NumberPad({ press, back, clear, submit }: { press: (n: string) => void;
 }
 
 function StartScreen({ difficulty, setDifficulty, start }: { difficulty: Difficulty; setDifficulty: (d: Difficulty) => void; start: () => void }) {
-  return <main className="min-h-screen bg-cyan-50 px-4 py-8 text-slate-800"><section className="mx-auto flex max-w-4xl flex-col gap-6 rounded-lg border-4 border-sky-200 bg-white p-6 shadow-soft"><p className="text-lg font-bold text-sky-700">초등학교 3학년 시간 계산</p><h1 className="text-5xl font-black text-slate-900">시간 비행 드릴</h1><div className="grid gap-4 text-xl font-bold sm:grid-cols-3">{(["easy", "normal", "hard"] as Difficulty[]).map((d) => <button key={d} className={`rounded-lg border-4 p-4 text-left ${difficulty === d ? "border-sky-500 bg-sky-100" : "border-slate-200 bg-slate-50"}`} onClick={() => setDifficulty(d)}><span className="block text-2xl font-black">{labels[d]}</span><span className="mt-2 block text-base text-slate-600">{d === "easy" ? "받아올림, 받아내림 없이 계산해요." : d === "normal" ? "한 번 받아올림이나 받아내림을 연습해요." : "60분과 1시간 관계를 더 꼼꼼히 살펴봐요."}</span></button>)}</div><div className="rounded-lg bg-amber-50 p-4 text-lg font-bold text-amber-900">적 비행기가 나타나면 문제를 풀어요. 정답이면 미사일이 발사되고, 두 번 틀리면 내 비행기가 피격됩니다.</div><button className="h-16 rounded-lg bg-emerald-500 text-2xl font-black text-white shadow-md hover:bg-emerald-600" onClick={start}>게임 시작</button></section></main>;
+  return <main className="min-h-screen bg-cyan-50 px-4 py-8 text-slate-800"><section className="mx-auto flex max-w-4xl flex-col gap-6 rounded-lg border-4 border-sky-200 bg-white p-6 shadow-soft"><p className="text-lg font-bold text-sky-700">초등학교 3학년 시간 계산</p><h1 className="text-5xl font-black text-slate-900">시간 비행 드릴</h1><div className="grid gap-4 text-xl font-bold sm:grid-cols-3">{(["easy", "normal", "hard"] as Difficulty[]).map((d) => <button key={d} className={`rounded-lg border-4 p-4 text-left ${difficulty === d ? "border-sky-500 bg-sky-100" : "border-slate-200 bg-slate-50"}`} onClick={() => setDifficulty(d)}><span className="block text-2xl font-black">{labels[d]} <span className="text-base text-indigo-700">{d === "easy" ? "×1.0" : d === "normal" ? "×1.4" : "×1.8"}</span></span><span className="mt-2 block text-base text-slate-600">{d === "easy" ? "받아올림, 받아내림 없이 계산해요." : d === "normal" ? "한 번 받아올림이나 받아내림을 연습해요." : "60분과 1시간 관계를 더 꼼꼼히 살펴봐요."}</span></button>)}</div><div className="rounded-lg bg-amber-50 p-4 text-lg font-bold text-amber-900">적 비행기가 나타나면 문제를 풀어요. 빠르고 정확할수록 점수가 높아지고, 어려운 단계에는 더 큰 배율이 적용돼요.</div><button className="h-16 rounded-lg bg-emerald-500 text-2xl font-black text-white shadow-md hover:bg-emerald-600" onClick={start}>게임 시작</button></section></main>;
 }
 
 function Result({ status, score, correct, wrong, best, difficulty, attempts, restart, home }: { status: Status; score: number; correct: number; wrong: number; best: number; difficulty: Difficulty; attempts: Attempt[]; restart: () => void; home: () => void }) {
@@ -213,8 +222,9 @@ export default function App() {
     if (answer.hours === "" || answer.minutes === "" || Number.isNaN(h) || Number.isNaN(m)) { setFeedback("시간과 분을 모두 입력해 주세요."); return; }
     if (m > 59) { setFeedback("60분이 넘으면 시간으로 바꿔야 해요."); return; }
     if (toTotal(h, m) === toTotal(problem.answerHours, problem.answerMinutes)) {
-      const nextStreak = streak + 1; const nextShot = shot + 1; const earned = scoreFor(Date.now() - startedAt.current, nextStreak, mistakes);
-      setSolved(true); setPhase("missileHit"); setCorrect((v) => v + 1); setShot(nextShot); setScore((v) => v + earned); setStreak(nextStreak); setBest((v) => Math.max(v, nextStreak)); record(mistakes); sound(nextShot >= 10 ? "clear" : "hit"); setFeedback(`격추 성공! +${earned}점`);
+      const nextStreak = streak + 1; const nextShot = shot + 1; const earned = scoreFor(Date.now() - startedAt.current, nextStreak, mistakes, difficulty);
+      const penaltyText = earned.accuracyPenalty > 0 ? ` · 정확도 -${earned.accuracyPenalty}` : "";
+      setSolved(true); setPhase("missileHit"); setCorrect((v) => v + 1); setShot(nextShot); setScore((v) => v + earned.total); setStreak(nextStreak); setBest((v) => Math.max(v, nextStreak)); record(mistakes); sound(nextShot >= 10 ? "clear" : "hit"); setFeedback(`격추 성공! +${earned.total}점 (속도 +${earned.speed} · 콤보 +${earned.combo}${penaltyText} · ${labels[difficulty]} ×${earned.difficultyMultiplier})`);
       window.setTimeout(() => { if (nextShot >= 10) { setBgmOn(false); setStatus("clear"); } else { reset(); setFeedback("새 적이 나타났어요. 문제를 풀어 미사일을 발사해요."); } }, 900); return;
     }
     const nextMistakes = mistakes + 1; setMistakes(nextMistakes); setWrong((v) => v + 1); setScore((v) => Math.max(0, v - 60)); setStreak(0); setPhase("playerHit"); sound("damage"); record(nextMistakes);
